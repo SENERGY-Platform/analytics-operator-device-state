@@ -16,12 +16,15 @@
 
 package org.infai.ses.senergy.operators.device_state;
 
+import org.infai.ses.senergy.exceptions.NoValueException;
+import org.infai.ses.senergy.operators.BaseOperator;
 import org.infai.ses.senergy.operators.Config;
 import org.infai.ses.senergy.operators.Message;
 import org.infai.ses.senergy.operators.OperatorInterface;
 import org.infai.ses.senergy.util.DateParser;
+import org.infai.ses.senergy.utils.ConfigProvider;
 
-public class DeviceState implements OperatorInterface {
+public class DeviceState extends BaseOperator {
 
     private final long INVALID = -1;
 
@@ -34,7 +37,6 @@ public class DeviceState implements OperatorInterface {
     private double standbyPower;
 
     public DeviceState() {
-        Config config = new Config();
         minDurationOffMillis = Long.parseLong(config.getConfigValue("minDurationOffMillis", "0"));
         minDurationCycleMillis = Long.parseLong(config.getConfigValue("minDurationCycleMillis", "0"));
         standbyPower = Double.parseDouble(config.getConfigValue("standbyPower", "0"));
@@ -46,7 +48,13 @@ public class DeviceState implements OperatorInterface {
 
     @Override
     public void run(Message message) {
-        double value = message.getInput("value").getValue();
+        double value = 0;
+        try {
+            value = message.getInput("value").getValue();
+        } catch (NoValueException e) {
+            e.printStackTrace();
+            return;
+        }
         String timestamp = message.getInput("timestamp").getString();
         long timestampMillis = DateParser.parseDateMills(timestamp);
 
@@ -76,8 +84,9 @@ public class DeviceState implements OperatorInterface {
     }
 
     @Override
-    public void configMessage(Message message) {
+    public Message configMessage(Message message) {
         message.addInput("value");
         message.addInput("timestamp");
+        return message;
     }
 }
