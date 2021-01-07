@@ -1,0 +1,32 @@
+{
+  "config": {
+    "minDurationOffMillis": "300000",
+    "standbyPower": "1.0",
+    "minDurationCycleMillis": "1200000"
+  },
+  "inputTopics": [
+    {
+      "name": "iot_bc59400c-405c-4c84-9862-a791daa82b60",
+      "filterType": "DeviceId",
+      "filterValue": "0",
+      "mappings": [
+        {
+          "dest": "value",
+          "source": "value.reading.value"
+        },
+        {
+          "dest": "timestamp",
+          "source": "value.reading.timestamp"
+        },
+        {
+          "dest": "expectIsOn",
+          "source": "value.reading.expectIsOn"
+        },
+        {
+          "dest": "expectTS",
+          "source": "value.reading.expectTS"
+        }
+      ]
+    }
+  ]
+}
