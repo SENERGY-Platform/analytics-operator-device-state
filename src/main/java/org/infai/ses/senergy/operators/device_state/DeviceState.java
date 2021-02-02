@@ -48,14 +48,20 @@ public class DeviceState extends BaseOperator {
 
     @Override
     public void run(Message message) {
-        double value = 0;
+        double value;
         try {
-            value = message.getInput("value").getValue();
+            value = message.getFlexInput("value").getValue();
         } catch (NoValueException e) {
             e.printStackTrace();
             return;
         }
-        String timestamp = message.getInput("timestamp").getString();
+        String timestamp;
+        try {
+            timestamp = message.getFlexInput("timestamp").getString();
+        } catch (NoValueException e) {
+            e.printStackTrace();
+            return;
+        }
         long timestampMillis = DateParser.parseDateMills(timestamp);
 
         boolean isAboveStandbyPower = value > standbyPower;
@@ -85,8 +91,8 @@ public class DeviceState extends BaseOperator {
 
     @Override
     public Message configMessage(Message message) {
-        message.addInput("value");
-        message.addInput("timestamp");
+        message.addFlexInput("value");
+        message.addFlexInput("timestamp");
         return message;
     }
 }
